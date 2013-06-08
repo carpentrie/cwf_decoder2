@@ -14,7 +14,7 @@ public class Decoder {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
                 //Create and set up the window.
-                JFrame frame = new JFrame("SpringForm");
+                JFrame frame = new JFrame("CWF Decoder");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setContentPane(new DecoderForm());
 
