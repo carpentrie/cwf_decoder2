@@ -2,7 +2,7 @@ package org.go.inq.decoder;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class TextAnalyzer {
     private static final int MIN_KEYWORD_COUNT = 2;
 
-    public static boolean containKeyword(String text, ArrayList<String> keywordList){
+    public static boolean containKeyword(String text, List<String> keywordList){
         int count = 0;
         for(String keyword: keywordList){
             if(StringUtils.contains(text, keyword)) {

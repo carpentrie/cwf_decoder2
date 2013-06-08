@@ -29,7 +29,7 @@ public class DecoderForm extends JPanel {
             File file = fc.getSelectedFile();
             selectFileText.setText(file.getAbsolutePath());
         } else {
-            selectFileText.setText("something wrong");
+            selectFileText.setText("select file do decrypt");
         }
     }
 
@@ -42,13 +42,17 @@ public class DecoderForm extends JPanel {
             File file = fc.getSelectedFile();
             outputDirectoryText.setText(file.getAbsolutePath());
         } else {
-            outputDirectoryText.setText("something wrong");
+            outputDirectoryText.setText("select output directory");
         }
     }
 
     private void startButtonClick(ActionEvent e) {
-        Decoder decoder = new Decoder(selectFileText.getText(), outputDirectoryText.getText());
-        decoder.testCaesar(3);
+        Decoder decoder = new Decoder(
+                selectFileText.getText(),
+                outputDirectoryText.getText(),
+                keywordsArea.getText());
+
+        decoder.tryDecrypt();
     }
 
     private void initComponents() {

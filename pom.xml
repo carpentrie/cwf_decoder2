@@ -40,7 +40,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Decoder</mainClass>
+                            <mainClass>org.go.inq.decoder.Decoder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -51,7 +51,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Decoder</mainClass>
+                            <mainClass>org.go.inq.decoder.Decoder</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

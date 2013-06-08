@@ -7,7 +7,7 @@ package org.go.inq.decoder.algorithm.caesar;
  * Time: 14:14
  * To change this template use File | Settings | File Templates.
  */
-public class Caesar {
+public class Caesar implements ShiftCryptAlgorythm {
     private String alphabet;      // Алфавит, заданный пользователем
 
     /**
@@ -24,7 +24,8 @@ public class Caesar {
      * @param position Количество позиций для сдвига
      * @return Зашифрованный текст
      */
-    public String getEncryption(String text, int position){
+    @Override
+    public String encrypt(String text, int position){
         String cipher ="";
         for(int i=0;i<text.length();i++){
             cipher+=alphabet.charAt((alphabet.indexOf(text.charAt(i))+position)%alphabet.length());
@@ -38,7 +39,8 @@ public class Caesar {
      * @param position Количество позиций для сдвига
      * @return Исходный текст
      */
-    public String getDecryption(String cipher, int position){
+    @Override
+    public String decrypt(String cipher, int position){
         String text ="";
         for(int i=0;i<cipher.length();i++){
             if(alphabet.indexOf(cipher.charAt(i))-position<0){

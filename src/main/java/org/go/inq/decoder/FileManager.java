@@ -13,8 +13,7 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class FileManager {
-    public static final String CHARSET_UTF8 = "UTF-8";
-    public static final String CHARSET_CP1251 = "CP1251";
+
 
     public static String readFile(String filePath, String charset){
         try {
@@ -40,7 +39,7 @@ public class FileManager {
         String result = "result_";
 
 
-        writeFile(readFile(basePath+cp1251, CHARSET_CP1251), basePath+result+cp1251, CHARSET_CP1251);
-        writeFile(readFile(basePath+utf8, CHARSET_UTF8), basePath+result+utf8, CHARSET_UTF8);
+        writeFile(readFile(basePath+cp1251, Const.CHARSET_CP1251), basePath+result+cp1251, Const.CHARSET_CP1251);
+        writeFile(readFile(basePath+utf8, Const.CHARSET_UTF8), basePath+result+utf8, Const.CHARSET_UTF8);
     }
 }
