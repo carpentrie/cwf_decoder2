@@ -9,10 +9,12 @@ package org.go.inq.decoder;
  */
 public class Const {
     public static final String DEFAULT_KEYWORD_LIST = "картина,холст,масло,живопись,портрет,натюрморт,пейзаж,художник,автор,подделка";
-    public static final int MAX_CHAR_SHIFT = 50;
+    public static final int MAX_CHAR_SHIFT = 100;
     public static final String COMMA = ",";
 
     public static final String CHARSET_UTF8 = "UTF-8";
     public static final String CHARSET_CP1251 = "CP1251";
+//    public static final String CHARSET_ANSI = "ANSI";
+    public static final String CHARSET_ISO_8859_1 = "ISO8859-1";
 
 }

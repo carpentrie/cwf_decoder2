@@ -14,16 +14,16 @@ import java.util.List;
 public class TextAnalyzer {
     private static final int MIN_KEYWORD_COUNT = 2;
 
-    public static boolean containKeyword(String text, List<String> keywordList){
+    public static int containKeyword(String text, List<String> keywordList){
         int count = 0;
         for(String keyword: keywordList){
-            if(StringUtils.contains(text, keyword)) {
+            if(StringUtils.containsIgnoreCase(text, keyword)) {
                 count++;
-                if(count >= MIN_KEYWORD_COUNT){
-                    return true;
-                }
+//                if(count >= MIN_KEYWORD_COUNT){
+//                    return true;
+//                }
             }
         }
-        return false;
+        return count;
     }
 }

@@ -32,6 +32,14 @@ public class FileManager {
         }
     }
 
+    public static void copy(String from, String to){
+        try {
+            FileUtils.copyFile(new File(from), new File(to));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void testFiles(){
         String basePath = "/home/nanomonk/dev/workspace/cwf/";
         String cp1251 = "text_cp1251.txt";

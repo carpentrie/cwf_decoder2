@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-			"$columnSpecs": "default, labelcompgap, 82dlu, labelcompgap, default, labelcompgap, 135dlu"
-			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, 38dlu, linegap, default, linegap, default, linegap, default"
+			"$columnSpecs": "default, labelcompgap, 82dlu, labelcompgap, default, labelcompgap, 122dlu, labelcompgap, 129dlu"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, 38dlu, linegap, default, linegap, 45dlu, linegap, 76dlu"
 		} ) {
 			name: "this"
 			add( new FormComponent( "javax.swing.JButton" ) {
@@ -22,53 +22,38 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 7
 				"gridY": 5
-			} )
-			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "outputDirectory"
-				"text": "Output directory"
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "outputDirectoryClick", true ) )
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 3
-				"gridY": 9
-				"gridWidth": 2
-			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "outputDirectoryText"
-			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 7
-				"gridY": 9
+				"gridWidth": 3
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label2"
-				"text": "Keywords(per comma):"
+				"text": "Decrypted file content:"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 13
+				"gridY": 9
 				"gridWidth": 3
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane1"
 				add( new FormComponent( "javax.swing.JTextArea" ) {
-					name: "keywordsArea"
+					name: "decryptedTextArea"
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 14
-				"gridHeight": 4
-				"gridWidth": 5
+				"gridY": 11
+				"gridHeight": 9
+				"gridWidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "startButton"
-				"text": "Start"
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "startButtonClick", true ) )
+				name: "closeButton"
+				"text": "Close"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "closeButtonClick", true ) )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-				"gridX": 3
+				"gridX": 9
 				"gridY": 21
-				"gridWidth": 5
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 400, 335 )
+			"size": new java.awt.Dimension( 590, 455 )
 		} )
 	}
 }

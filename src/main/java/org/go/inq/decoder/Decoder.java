@@ -1,13 +1,12 @@
 package org.go.inq.decoder;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.go.inq.decoder.algorithm.caesar.Caesar;
-import org.go.inq.decoder.algorithm.caesar.CaesarAlphabet;
-import org.go.inq.decoder.algorithm.caesar.ShiftCryptAlgorythm;
+import org.go.inq.decoder.algorithm.UnicodeShifter;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,18 +19,31 @@ import java.util.List;
  */
 public class Decoder {
     private String inputFile;
-    private String outputDirectory;
+    private String outputDirectory = System.getProperty("user.dir") + File.separator;
     private String keywords;
 
-    private static final String[] CHARSET_LIST = new String[]{Const.CHARSET_UTF8, Const.CHARSET_CP1251};
-    public Decoder(){
+    private String FAKE_FILE = "inq_picture_list.txt";
+    private String KEYWORDS_FILE = "keywords.txt";
 
+    private static final String[] CHARSET_LIST = new String[]{Const.CHARSET_UTF8, Const.CHARSET_CP1251, Const.CHARSET_ISO_8859_1};
+
+    public Decoder(){
+        this.keywords = initKeywords();
     }
 
-    public Decoder(String inputFile, String outputDirectory, String keywords){
+    public Decoder(String inputFile){
         this.inputFile = inputFile;
-        this.outputDirectory = outputDirectory;
-        this.keywords = keywords;
+        this.keywords = initKeywords();
+    }
+
+    private String initKeywords(){
+        File keywordFile = new File(outputDirectory+KEYWORDS_FILE);
+        if(!keywordFile.exists()){
+            return Const.DEFAULT_KEYWORD_LIST;
+        }
+        String keywords = FileManager.readFile(keywordFile.getAbsolutePath(), Const.CHARSET_UTF8);
+        keywords = keywords.trim();
+        return keywords;
     }
 
     public String getInputFile() {
@@ -58,44 +70,95 @@ public class Decoder {
         this.keywords = keywords;
     }
 
-    public void testCaesar(int charShift){
-        Caesar algo = new Caesar(CaesarAlphabet.getEverything());
-        String decrypted = algo.decrypt(FileManager.readFile(inputFile, Const.CHARSET_UTF8), charShift);
-        String encrypted = algo.encrypt(decrypted, charShift);
+    public DecryptResult decrypt(){
+        FileManager.copy(inputFile, outputDirectory+"copy_original.txt");
 
-        FileManager.writeFile(decrypted, outputDirectory+"/decrypted_"+charShift+".txt", Const.CHARSET_UTF8);
-        FileManager.writeFile(encrypted, outputDirectory+"/encrypted_"+charShift+".txt", Const.CHARSET_UTF8);
-    }
+        List<String> keywordList = getKeywordList();
 
-    public void tryDecrypt(){
-        List<String> keywordList = getKeywordList(keywords);
-        Caesar algorythm = new Caesar(CaesarAlphabet.getEverything());
+        DecryptResult result = new DecryptResult();
+        result.setCountContainedKeywords(0); // forced init
 
         for(String charset: CHARSET_LIST){
             String fileBody = FileManager.readFile(inputFile, charset);
 
-            for (int i=1; i<Const.MAX_CHAR_SHIFT; i++){
-                String decrypted = algorythm.decrypt(fileBody, i);
-                if(TextAnalyzer.containKeyword(decrypted, keywordList)) {
-                    FileManager.writeFile(decrypted, outputDirectory+File.separator+"decrypted_"+i+".txt", Const.CHARSET_UTF8);
+            for (int i=-Const.MAX_CHAR_SHIFT; i < Const.MAX_CHAR_SHIFT; i++){
+                String decrypted = UnicodeShifter.decrypt(fileBody, i);
+                int countContainedKeywords = TextAnalyzer.containKeyword(decrypted, keywordList);
+
+                if( countContainedKeywords > 0) {
+                    if(result.getCountContainedKeywords() < countContainedKeywords){
+                        result.setText(decrypted);
+                        result.setShift(i);
+                        result.setCharset(charset);
+                        result.setCountContainedKeywords(countContainedKeywords);
+                    }
+
+                    FileManager.writeFile(decrypted, outputDirectory+"decrypted_"+i+"_"+charset+".txt", Const.CHARSET_UTF8);
+                }
+
+
+                if(!Const.CHARSET_UTF8.equals(charset)){
+                    // and do the same but for variant converted back to original charset
+                    decrypted = convertString(decrypted, charset);
+
+                    countContainedKeywords = TextAnalyzer.containKeyword(decrypted, keywordList);
+
+                    if( countContainedKeywords > 0) {
+                        if(result.getCountContainedKeywords() < countContainedKeywords){
+                            result.setText(decrypted);
+                            result.setShift(i);
+                            result.setCharset(charset);
+                            result.setCountContainedKeywords(countContainedKeywords);
+                        }
+
+                        FileManager.writeFile(decrypted, outputDirectory+"decrypted_"+i+"_"+charset+"_converted.txt", Const.CHARSET_UTF8);
+                    }
                 }
             }
         }
+        if(StringUtils.isNotEmpty(result.getText())){
+            encryptFakeFile(result.getShift(), result.getCharset());
+        }
+        return result;
     }
 
-    private List<String> getKeywordList(String keywords){
-        return Arrays.asList(StringUtils.split(StringUtils.isNotEmpty(keywords)? keywords : Const.DEFAULT_KEYWORD_LIST, Const.COMMA));
+    private void encrypt(String fileBody, String fileName, int shift, String charset){
+        String encoded = UnicodeShifter.encrypt(fileBody, shift);
+        FileManager.writeFile(encoded, outputDirectory + "encrypted_" + fileName + shift + "_" + charset + ".txt",charset);
+    }
+
+    private void encryptFakeFile(int shift, String charset){
+        // read with utf8 since it is our file, we know its charset
+        File fakeFile = new File(outputDirectory+FAKE_FILE);
+        if(!fakeFile.exists()){
+            return;
+        }
+
+        String fileBody = FileManager.readFile(fakeFile.getAbsolutePath(), Const.CHARSET_UTF8);
+        encrypt(fileBody, "fake", shift, charset);
+    }
+
+    private String convertString(String string, String charset){
+        try {
+            return new String(string.getBytes(Const.CHARSET_UTF8), charset);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<String> getKeywordList(){
+        return Arrays.asList(StringUtils.split(Const.DEFAULT_KEYWORD_LIST, Const.COMMA));
     }
 
 
     public static void main(String[] args){
-        String outputDirectory = "D:\\go";
-        Caesar algorythm = new Caesar(CaesarAlphabet.getEverything());
-        int charShift = 5;
+//        Decoder decoder = new Decoder();
+//        decoder.setInputFile(decoder.getOutputDirectory() + "список.txt");
 
-        String encrypted = algorythm.encrypt(FileManager.readFile(outputDirectory + File.separator + "origin_utf8.txt", Const.CHARSET_UTF8), charShift );
+//        decoder.encrypt(decoder.getInputFile(), 3, Const.CHARSET_UTF8);
+//        decoder.encrypt(decoder.getInputFile(), -17, Const.CHARSET_UTF8);
 
-        FileManager.writeFile(encrypted, outputDirectory+File.separator + "encrypted_"+charShift+".txt", Const.CHARSET_UTF8);
         runWindow();
     }
 

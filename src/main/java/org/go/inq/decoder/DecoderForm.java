@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.*;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import org.apache.commons.lang.StringUtils;
 /*
  * Created by JFormDesigner on Sat Jun 08 09:38:31 FET 2013
  */
@@ -28,31 +29,22 @@ public class DecoderForm extends JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             selectFileText.setText(file.getAbsolutePath());
+
+            Decoder decoder = new Decoder(file.getAbsolutePath());
+            decryptedTextArea.setText("Please, wait. Analyzing file...");
+
+            DecryptResult decrypted = decoder.decrypt();
+            if(StringUtils.isEmpty(decrypted.getText())){
+                decryptedTextArea.setText("Error occurred during open file.");
+            }
+            decryptedTextArea.setText(decrypted.getText());
         } else {
             selectFileText.setText("select file do decrypt");
         }
     }
 
-    private void outputDirectoryClick(ActionEvent e) {
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        int returnVal = fc.showOpenDialog(DecoderForm.this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            outputDirectoryText.setText(file.getAbsolutePath());
-        } else {
-            outputDirectoryText.setText("select output directory");
-        }
-    }
-
-    private void startButtonClick(ActionEvent e) {
-        Decoder decoder = new Decoder(
-                selectFileText.getText(),
-                outputDirectoryText.getText(),
-                keywordsArea.getText());
-
-        decoder.tryDecrypt();
+    private void closeButtonClick(ActionEvent e) {
+        System.exit(0);
     }
 
     private void initComponents() {
@@ -60,26 +52,16 @@ public class DecoderForm extends JPanel {
         // Generated using JFormDesigner Evaluation license - sed sed
         selectFileButton = new JButton();
         selectFileText = new JTextField();
-        outputDirectory = new JButton();
-        outputDirectoryText = new JTextField();
         label2 = new JLabel();
         scrollPane1 = new JScrollPane();
-        keywordsArea = new JTextArea();
-        keywordsArea.setText(Const.DEFAULT_KEYWORD_LIST);
-        startButton = new JButton();
+        decryptedTextArea = new JTextArea();
+        closeButton = new JButton();
 
         //======== this ========
 
-        // JFormDesigner evaluation mark
-        setBorder(new javax.swing.border.CompoundBorder(
-            new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-                "CWF Decoder", javax.swing.border.TitledBorder.CENTER,
-                javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                java.awt.Color.red), getBorder())); addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
-
         setLayout(new FormLayout(
-            "default, $lcgap, 82dlu, $lcgap, default, $lcgap, 135dlu",
-            "7*(default, $lgap), 38dlu, 3*($lgap, default)"));
+            "default, $lcgap, 82dlu, $lcgap, default, $lcgap, 122dlu, $lcgap, 129dlu",
+            "7*(default, $lgap), 38dlu, $lgap, default, $lgap, 45dlu, $lgap, 76dlu"));
 
         //---- selectFileButton ----
         selectFileButton.setText("Select file");
@@ -90,38 +72,27 @@ public class DecoderForm extends JPanel {
             }
         });
         add(selectFileButton, CC.xywh(3, 5, 2, 1));
-        add(selectFileText, CC.xy(7, 5));
-
-        //---- outputDirectory ----
-        outputDirectory.setText("Output directory");
-        outputDirectory.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                outputDirectoryClick(e);
-            }
-        });
-        add(outputDirectory, CC.xywh(3, 9, 2, 1));
-        add(outputDirectoryText, CC.xy(7, 9));
+        add(selectFileText, CC.xywh(7, 5, 3, 1));
 
         //---- label2 ----
-        label2.setText("Keywords(per comma):");
-        add(label2, CC.xywh(3, 13, 3, 1));
+        label2.setText("Decrypted file content:");
+        add(label2, CC.xywh(3, 9, 3, 1));
 
         //======== scrollPane1 ========
         {
-            scrollPane1.setViewportView(keywordsArea);
+            scrollPane1.setViewportView(decryptedTextArea);
         }
-        add(scrollPane1, CC.xywh(3, 14, 5, 4));
+        add(scrollPane1, CC.xywh(3, 11, 7, 9));
 
-        //---- startButton ----
-        startButton.setText("Start");
-        startButton.addActionListener(new ActionListener() {
+        //---- closeButton ----
+        closeButton.setText("Close");
+        closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startButtonClick(e);
+                closeButtonClick(e);
             }
         });
-        add(startButton, CC.xywh(3, 21, 5, 1));
+        add(closeButton, CC.xy(9, 21));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -129,11 +100,9 @@ public class DecoderForm extends JPanel {
     // Generated using JFormDesigner Evaluation license - sed sed
     private JButton selectFileButton;
     private JTextField selectFileText;
-    private JButton outputDirectory;
-    private JTextField outputDirectoryText;
     private JLabel label2;
     private JScrollPane scrollPane1;
-    private JTextArea keywordsArea;
-    private JButton startButton;
+    private JTextArea decryptedTextArea;
+    private JButton closeButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
